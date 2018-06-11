@@ -53,7 +53,8 @@ $(document).ready(function() {
 
   });
 
-  $('#betting-actions').on('click', '#hit', function() {
+  // $('#betting-actions').on('click', '#hit', function() {
+  $('#hit').click(function() {
     //========================================================================================================================
     // draw a card first
     //========================================================================================================================
@@ -76,9 +77,17 @@ $(document).ready(function() {
           $('#stand').fadeIn(1000);
         };
     };
+
+    $('#players-cards').text(playerCard);
   });
 
-  $('#betting-actions').on('click', '#stand', function() {
+  // $('#betting-actions').on('click', '#stand', function() {
+  $('#stand').click(function() {
+
+    $('#betting-actions').fadeOut(1000, function() {
+      $('.betting-action-buttons').hide();
+    });
+
     //========================================================================================================================
     // player stands, time for banker to draw
     //========================================================================================================================
@@ -89,14 +98,20 @@ $(document).ready(function() {
     // evaluate player win or banker win
     //========================================================================================================================
     if (bankerPoints[1]) {
+        console.log("Player points: " + playerPoints);
+        console.log("Banker points: " + bankerPoints);
         console.log("Player cards: " + playerCard);
         console.log("Banker cards: " + bankerCard);
-        console.log("Banker wins");
-    } else if (playerPoints > bankerPoints || bankerPoints > 21) {
+        console.log("Banker blackjack");
+    } else if (playerPoints[0] > bankerPoints || bankerPoints > 21) {
+        console.log("Player points: " + playerPoints);
+        console.log("Banker points: " + bankerPoints);
         console.log("Player cards: " + playerCard);
         console.log("Banker cards: " + bankerCard);
         console.log("Player wins");
     } else {
+        console.log("Player points: " + playerPoints);
+        console.log("Banker points: " + bankerPoints);
         console.log("Player cards: " + playerCard);
         console.log("Banker cards: " + bankerCard);
         console.log("Banker wins");

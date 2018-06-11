@@ -229,6 +229,7 @@ function bankerMove(bankersCards, deck) {
     if (hasSufficientPoints[3]) {
       bankerPoints = hasSufficientPoints[0];
       blackjack = true;
+      $('#bankers-cards').text(bankerCard);
       return [bankerPoints, blackjack];
     };
 
@@ -240,6 +241,7 @@ function bankerMove(bankersCards, deck) {
       bankerPoints = hasSufficientPoints[0];
     };
 
+    $('#bankers-cards').text(bankerCard);
   };
   return [bankerPoints];
 };
