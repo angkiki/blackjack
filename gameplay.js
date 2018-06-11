@@ -4,6 +4,11 @@
 $(document).ready(function() {
 
   $('#deal').click(function() {
+    // $('#bankers-cards .card-images').remove();
+    // $('#bankers-cards .card-images').remove();
+    $('.card-images').remove();
+    $('#banker-points').text('');
+    $('#player-points').text('');
     //========================================================================================================================
     // shuffle a new deck of 4 cards
     //========================================================================================================================
@@ -25,9 +30,13 @@ $(document).ready(function() {
     //========================================================================================================================
     playerPoints = calculatePlayersPointsWith2Cards(playerCard);
     // player points returns an array of 4 objects [points, points with ace, can split?, blackjack?]
+    displayPlayerPoints(playerPoints);
+    displayBankerPoints( parseInt( bankerCard[0].slice(0,-1) ) );
 
-    $('#bankers-cards').text(bankerCard);
-    $('#players-cards').text(playerCard);
+    appendBankerCards(bankerCard[0]);
+    for (var i=0; i<playerCard.length; i++) {
+      appendPlayerCards(playerCard[i]);
+    };
 
     $('#bankers-cards').fadeIn(1000);
     $('#players-cards').fadeIn(1000, function() {
@@ -36,6 +45,7 @@ $(document).ready(function() {
       //========================================================================================================================
       if (playerPoints[3] === true) {
           alert("You got blackjack!");
+          console.log("Player wins");
       } else {
           // proceed to check if player can split
           if (playerPoints[2] === true) {
@@ -60,25 +70,28 @@ $(document).ready(function() {
     //========================================================================================================================
     var newCard = drawACard(newDeck);
     playerCard.push(newCard);
-
+    appendPlayerCards(newCard);
     //========================================================================================================================
     // calculate points of card
     //========================================================================================================================
     playerPoints = calculatePlayersPointsWithMultipleCards(playerCard);
+    // playerPoints will hold an array of 2 calculated values (depending on whether got ace or not)
+    displayPlayerPoints(playerPoints);
+
     var burst = checkIfPlayerBurst(playerPoints[0]);
 
     if (burst) {
-        alert("Burst");
+        // alert("Burst");
         $('#betting-actions').fadeOut(1000, function() {
           $('.betting-action-buttons').hide();
         });
+        console.log("Banker Wins");
     } else {
         if ( $('#stand').is(':visible') === false ) {
           $('#stand').fadeIn(1000);
         };
     };
 
-    $('#players-cards').text(playerCard);
   });
 
   // $('#betting-actions').on('click', '#stand', function() {
@@ -98,22 +111,12 @@ $(document).ready(function() {
     // evaluate player win or banker win
     //========================================================================================================================
     if (bankerPoints[1]) {
-        console.log("Player points: " + playerPoints);
-        console.log("Banker points: " + bankerPoints);
-        console.log("Player cards: " + playerCard);
-        console.log("Banker cards: " + bankerCard);
         console.log("Banker blackjack");
-    } else if (playerPoints[0] > bankerPoints || bankerPoints > 21) {
-        console.log("Player points: " + playerPoints);
-        console.log("Banker points: " + bankerPoints);
-        console.log("Player cards: " + playerCard);
-        console.log("Banker cards: " + bankerCard);
+    } else if (bankerPoints[0] === playerPoints[0]) {
+        console.log("Draw");
+    } else if (playerPoints[0] > bankerPoints[0] || bankerPoints > 21) {
         console.log("Player wins");
     } else {
-        console.log("Player points: " + playerPoints);
-        console.log("Banker points: " + bankerPoints);
-        console.log("Player cards: " + playerCard);
-        console.log("Banker cards: " + bankerCard);
         console.log("Banker wins");
     };
   });

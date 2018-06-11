@@ -1,0 +1,19 @@
+.card-images {
+  height: 200px;
+  width: 125px;
+  border: 3px solid black;
+  border-radius: 15px;
+  margin: 2px;
+}
+
+#bankers-cards {
+  height: 250px;
+}
+
+#players-cards {
+  height: 250px;
+}
+
+.title {
+  font-size: 24px;
+}

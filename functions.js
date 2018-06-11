@@ -50,6 +50,56 @@ function drawACard(deck) {
   return randomCard;
 };
 
+function appendPlayerCards(card) {
+  var folder = "images/";
+  var extension = ".png";
+  var cardImage = folder + card + extension;
+
+  $('#players-cards').append("<img style='display:none;' src='" + cardImage + "' class='card-images'/>");
+
+  $('.card-images').fadeIn(700);
+};
+
+function appendBankerCards(card) {
+  var folder = "images/";
+  var extension = ".png";
+  var cardImage = folder + card + extension;
+
+  $('#bankers-cards').append("<img style='display:none;' src='" + cardImage + "' class='card-images' />");
+
+  $('.card-images').fadeIn(700);
+};
+
+function displayPlayerPoints(playerPointArray) {
+  if (playerPointArray[1]) {
+      if (playerPointArray[0] === playerPointArray[1]) {
+          $('#player-points').text(playerPointArray[0]);
+      } else {
+          $('#player-points').text(playerPointArray[0] + " or " + playerPointArray[1]);
+      };
+
+  } else {
+      $('#player-points').text(playerPointArray[0])
+  };
+};
+
+function displayBankerPoints(bankerPoints) {
+  $('#banker-points').text(bankerPoints);
+}
+
+function updateBankerPoints(bankerPointsArray) {
+  if (bankerPointsArray[1]) {
+      if (bankerPointsArray[0] === bankerPointsArray[1]) {
+          $('#banker-points').text(bankerPointsArray[0]);
+      } else {
+          $('#banker-points').text(bankerPointsArray[0] + " or " + bankerPointsArray[1]);
+      };
+
+  } else {
+      $('#banker-points').text(bankerPointsArray[0])
+  };
+};
+
 //========================================================================================================================
 // player functions
 //========================================================================================================================
@@ -220,16 +270,17 @@ function bankerMove(bankersCards, deck) {
     //========================================================================================================================
     var randomCard = drawACard(deck);
     bankersCards.push(randomCard);
+    appendBankerCards(randomCard);
 
     //========================================================================================================================
     // evaluate score
     //========================================================================================================================
     var hasSufficientPoints = evaluateBankersHand(bankersCards);
+    updateBankerPoints(hasSufficientPoints);
 
     if (hasSufficientPoints[3]) {
       bankerPoints = hasSufficientPoints[0];
       blackjack = true;
-      $('#bankers-cards').text(bankerCard);
       return [bankerPoints, blackjack];
     };
 
@@ -240,8 +291,6 @@ function bankerMove(bankersCards, deck) {
       noHard17 = false;
       bankerPoints = hasSufficientPoints[0];
     };
-
-    $('#bankers-cards').text(bankerCard);
   };
   return [bankerPoints];
 };
