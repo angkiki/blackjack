@@ -9,7 +9,6 @@ function resetButtons() {
   });
 };
 
-
 //====================================================
 // CREATING A RANDOM DECK WITH 4 DECKS OF CARDS
 //====================================================
@@ -105,9 +104,12 @@ function appendBankerCards(card) {
 // CHECK FOR BLACKJACK
 //====================================================
 function checkForBlackJack(arrayOfCards) {
-  // this will be ran only when we have 2 cards
   var hasBlackJack = false;
   var points = 0;
+
+  if (arrayOfCards.length !== 2) {
+      return hasBlackJack
+  };
 
   for (var i = 0; i < arrayOfCards.length; i++) {
     var number = parseInt( arrayOfCards[i].slice(0, -1) );
@@ -184,6 +186,66 @@ function removePlayer2Block() {
   player2Card = null;
   whichPlayersTurn = false;
   $('#player-turn-indicator').text("");
+};
+
+//====================================================
+// REFLECT WIN OR LOSE
+//====================================================
+function comparePoints(playerPoints, bankerPoints) {
+  switch(true) {
+    case (playerPoints === bankerPoints):
+      return "Draw";
+
+    case (playerPoints > bankerPoints):
+      return "Player Wins";
+
+    case (bankerPoints > playerPoints && bankerPoints <= 21):
+      return "Banker Wins";
+
+    default:
+      return "Player Wins";
+  };
+};
+
+function checkBankerWinOrLose() {
+  var bankerPoints = calculatePoints(bankerCard);
+  var bankerHasBlackJack = checkForBlackJack(bankerCard);
+
+  if (whichPlayersTurn !== false) {
+      if (bankerHasBlackJack) {
+          $('#game-result').hide().text('Banker Has Blackjack').fadeIn(500);
+          resetButtons();
+      } else {
+          //====================================================
+          // GRAB THE POINTS OF PLAYERS 1 AND 2
+          //====================================================
+          if (typeof player1Card !== 'string') {
+              var player1Points = calculatePoints(player1Card);
+              var result1 = comparePoints(player1Points[0], bankerPoints[0]);
+          };
+
+          if (typeof player2Card !== 'string') {
+              var player2Points = calculatePoints(player2Card);
+              var result2 = comparePoints(player2Points[0], bankerPoints[0]);
+          };
+
+          $('#game-result').hide().text(result1 + " " + result2).fadeIn(500);
+          resetButtons();
+      };
+  } else {
+      //====================================================
+      // ONLY ONE PLAYER
+      //====================================================
+      if (bankerHasBlackJack) {
+          $('#game-result').hide().text('Banker Has Blackjack').fadeIn(500);
+          resetButtons();
+      } else {
+          var playerPoints = calculatePoints(player1Card);
+          var result = comparePoints(playerPoints[0], bankerPoints[0]);
+          $('#game-result').hide().text(result).fadeIn(500);
+          resetButtons();
+      };
+  };
 };
 
 //===========================================================================

@@ -8,6 +8,7 @@ $(document).ready(function() {
     $('.card-images').remove();
     $('#banker-points').text('');
     $('#player-points').text('');
+    $('#game-result').hide()
     //========================================================================================================================
     // shuffle a new deck of 4 cards
     //========================================================================================================================
@@ -21,7 +22,7 @@ $(document).ready(function() {
     //========================================================================================================================
     // assign the cards to player and banker
     //========================================================================================================================
-    player1Card = ["1h", "1d"]  //cardsDealt[0];
+    player1Card = cardsDealt[0];
     bankerCard = cardsDealt[1];
 
     $('#deal').fadeOut(1000, function() {
@@ -47,7 +48,7 @@ $(document).ready(function() {
       // UPDATE BUTTONS ACCORDINGLY
       //=====================================================================
       if (playerHasBlackJack) {
-          console.log("Player has blackjack");
+          $('#game-result').hide().text("Player Blackjack").fadeIn(500);
           $('#deal').fadeIn(1000);
       } else {
           if (canSplit) {
@@ -94,19 +95,20 @@ $(document).ready(function() {
         if (burst) {
             if (whichPlayersTurn === 1) {
                 player1Card = "Burst";
-                console.log("Banker Wins Player: " + whichPlayersTurn);
                 whichPlayersTurn = 2;
                 $('#player-turn-indicator').fadeOut(500, function() {
                   $('#player-turn-indicator').text("Player " + whichPlayersTurn + "'s turn").fadeIn(500);
                 })
             } else {
                 if (player1Card === "Burst") {
+                    $('#game-result').hide().text('Player 1 & 2 Lose').fadeIn(500);
                     resetButtons();
                 } else {
+                    $('#game-result').hide().text('Player 2 Burst').fadeIn(500);
                     player2Card = "Burst";
                     bankerDrawCards(bankerCard, newDeck);
+                    checkBankerWinOrLose();
                 }
-                console.log("Banker Wins Player: " + whichPlayersTurn);
             };
 
         } else {
@@ -138,7 +140,7 @@ $(document).ready(function() {
         //====================================================
         if (burst) {
             resetButtons();
-            console.log('Banker wins');
+            $('#game-result').hide().text('Banker Wins').fadeIn(500);
         } else {
             if ( $('#stand').is(':visible') === false && playerPoints[0] > 11 ) {
               $('#stand').fadeIn(1000);
@@ -166,10 +168,10 @@ $(document).ready(function() {
                 //====================================================
                 // PLAYER 2 HAS BLACKJACK
                 //====================================================
-                console.log('Player 2 blackjack');
+                $('#game-result').hide().text('Player 2 Blackjack').fadeIn(500);
                 player2Card = "BJ";
                 bankerDrawCards(bankerCard, newDeck);
-
+                checkBankerWinOrLose();
             } else {
 
                 //====================================================
@@ -195,12 +197,14 @@ $(document).ready(function() {
             // PLAYER 2 IS DONE, CAN RUN BANKER DRAW
             //====================================================
             bankerDrawCards(bankerCard, newDeck);
+            checkBankerWinOrLose();
         }
     //====================================================
     // NO SPLIT SCENARIO
     //====================================================
     } else {
         bankerDrawCards(bankerCard, newDeck);
+        checkBankerWinOrLose();
     };
   });
 
@@ -221,7 +225,7 @@ $(document).ready(function() {
     // IF PLAYER 1 BLACKJACK
     //====================================================
     if (player1BlackJack) {
-        console.log("Player 1 blackjack");
+        $('#game-result').hide().text('Player 1 Blackjack').fadeIn(500);
         player1Card = "BJ";
 
         //====================================================
@@ -230,7 +234,7 @@ $(document).ready(function() {
         var player2BlackJack = checkForBlackJack(player2Card);
 
         if (player2BlackJack) {
-            console.log("Player 2 blackjack");
+            $('#game-result').hide().text('Player 1 & 2 Blackjack').fadeIn(500);
             resetButtons();
         } else {
 
