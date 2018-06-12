@@ -4,8 +4,7 @@
 $(document).ready(function() {
 
   $('#deal').click(function() {
-    // $('#bankers-cards .card-images').remove();
-    // $('#bankers-cards .card-images').remove();
+    removePlayer2Block();
     $('.card-images').remove();
     $('#banker-points').text('');
     $('#player-points').text('');
@@ -15,109 +14,266 @@ $(document).ready(function() {
     newDeck = createDeck();
 
     //========================================================================================================================
-    // deal the cards. currently 1 player 1 banker
+    // deal the cards
     //========================================================================================================================
     var cardsDealt = dealCards(newDeck);
 
     //========================================================================================================================
     // assign the cards to player and banker
     //========================================================================================================================
-    playerCard = cardsDealt[0];
+    player1Card = ["1h", "1d"]  //cardsDealt[0];
     bankerCard = cardsDealt[1];
 
-    //========================================================================================================================
-    // calculate the state of the cards that the players get
-    //========================================================================================================================
-    playerPoints = calculatePlayersPointsWith2Cards(playerCard);
-    // player points returns an array of 4 objects [points, points with ace, can split?, blackjack?]
-    displayPlayerPoints(playerPoints);
-    displayBankerPoints( parseInt( bankerCard[0].slice(0,-1) ) );
+    $('#deal').fadeOut(1000, function() {
 
-    appendBankerCards(bankerCard[0]);
-    for (var i=0; i<playerCard.length; i++) {
-      appendPlayerCards(playerCard[i]);
-    };
-
-    $('#bankers-cards').fadeIn(1000);
-    $('#players-cards').fadeIn(1000, function() {
-      //========================================================================================================================
-      // check for blackjack first
-      //========================================================================================================================
-      if (playerPoints[3] === true) {
-          alert("You got blackjack!");
-          console.log("Player wins");
-      } else {
-          // proceed to check if player can split
-          if (playerPoints[2] === true) {
-              $('#split').show();
-          };
-
-          if (playerPoints[0] > 11) {
-              $('#stand').show();
-          };
-
-          $('#hit').show();
-          $('#betting-actions').fadeIn(1000);
+      //=====================================================================
+      // UPDATE SCORE AND IMAGES
+      //=====================================================================
+      appendBankerCards(bankerCard);
+      for (var i = 0; i < player1Card.length; i++) {
+        appendPlayerCards(player1Card[i], 1);
       };
-    });
+      displayBankerPoints(bankerCard);
+      displayPlayerPoints(player1Card, 1);
 
+      //=====================================================================
+      // CHECK PLAYER SCORE AND IF PLAYER HAS BLACKJACK
+      //=====================================================================
+      var playerHasBlackJack = checkForBlackJack(player1Card);
+      var canSplit = playerCanSplit(player1Card);
+      var playerPoints = calculatePoints(player1Card);
+
+      //=====================================================================
+      // UPDATE BUTTONS ACCORDINGLY
+      //=====================================================================
+      if (playerHasBlackJack) {
+          console.log("Player has blackjack");
+          $('#deal').fadeIn(1000);
+      } else {
+          if (canSplit) {
+              $('#hit').fadeIn(1000);
+              if (playerPoints[0] > 11) {
+                  $('#stand').fadeIn(1000);
+              };
+              $('#stand').fadeIn(1000);
+              $('#split').fadeIn(1000);
+          } else {
+              $('#hit').fadeIn(1000);
+              if (playerPoints[0] > 11) {
+                  $('#stand').fadeIn(1000);
+              };
+          };
+      };
+
+    });
   });
 
-  // $('#betting-actions').on('click', '#hit', function() {
   $('#hit').click(function() {
-    //========================================================================================================================
-    // draw a card first
-    //========================================================================================================================
-    var newCard = drawACard(newDeck);
-    playerCard.push(newCard);
-    appendPlayerCards(newCard);
-    //========================================================================================================================
-    // calculate points of card
-    //========================================================================================================================
-    playerPoints = calculatePlayersPointsWithMultipleCards(playerCard);
-    // playerPoints will hold an array of 2 calculated values (depending on whether got ace or not)
-    displayPlayerPoints(playerPoints);
+    //====================================================
+    // MUST EVALUATE IF WE HAVE A SPLIT SITUATION FIRST
+    //====================================================
 
-    var burst = checkIfPlayerBurst(playerPoints[0]);
+    if (whichPlayersTurn) {
+        //====================================================
+        // DRAW A CARD
+        //====================================================
+        var newCard = drawACard(newDeck);
+        eval("player" + whichPlayersTurn + "Card").push(newCard);
+        appendPlayerCards(newCard, whichPlayersTurn);
 
-    if (burst) {
-        // alert("Burst");
-        $('#betting-actions').fadeOut(1000, function() {
-          $('.betting-action-buttons').hide();
-        });
-        console.log("Banker Wins");
+        //====================================================
+        // CALCULATE POINTS
+        //====================================================
+        displayPlayerPoints(eval("player" + whichPlayersTurn + "Card"), whichPlayersTurn);
+        var playerPoints = calculatePoints(eval("player" + whichPlayersTurn + "Card"));
+        var burst = checkIfBurst(eval("player" + whichPlayersTurn + "Card"));
+
+        //====================================================
+        // ANIMATE ACCORDINGLY
+        //====================================================
+        if (burst) {
+            if (whichPlayersTurn === 1) {
+                player1Card = "Burst";
+                console.log("Banker Wins Player: " + whichPlayersTurn);
+                whichPlayersTurn = 2;
+                $('#player-turn-indicator').fadeOut(500, function() {
+                  $('#player-turn-indicator').text("Player " + whichPlayersTurn + "'s turn").fadeIn(500);
+                })
+            } else {
+                if (player1Card === "Burst") {
+                    resetButtons();
+                } else {
+                    player2Card = "Burst";
+                    bankerDrawCards(bankerCard, newDeck);
+                }
+                console.log("Banker Wins Player: " + whichPlayersTurn);
+            };
+
+        } else {
+            if ( $('#stand').is(':visible') === false && playerPoints[0] > 11 ) {
+              $('#stand').fadeIn(1000);
+            };
+        };
     } else {
-        if ( $('#stand').is(':visible') === false ) {
-          $('#stand').fadeIn(1000);
+    //====================================================
+    // NO SPLIT SITUATION
+    //====================================================
+
+        //====================================================
+        // DRAW A CARD
+        //====================================================
+        var newCard = drawACard(newDeck);
+        player1Card.push(newCard);
+        appendPlayerCards(newCard, 1);
+
+        //====================================================
+        // CALCULATE POINTS
+        //====================================================
+        displayPlayerPoints(player1Card, 1);
+        var playerPoints = calculatePoints(player1Card);
+        var burst = checkIfBurst(player1Card);
+
+        //====================================================
+        // ANIMATE ACCORDINGLY
+        //====================================================
+        if (burst) {
+            resetButtons();
+            console.log('Banker wins');
+        } else {
+            if ( $('#stand').is(':visible') === false && playerPoints[0] > 11 ) {
+              $('#stand').fadeIn(1000);
+            };
         };
     };
-
   });
 
-  // $('#betting-actions').on('click', '#stand', function() {
   $('#stand').click(function() {
+    //====================================================
+    // MUST CHECK FOR WHICH PLAYERS TURN FIRST
+    //====================================================
+    if (whichPlayersTurn) {
+        if (whichPlayersTurn === 1) {
+            //====================================================
+            // IF ITS PLAYER ONE
+            //====================================================
 
-    $('#betting-actions').fadeOut(1000, function() {
-      $('.betting-action-buttons').hide();
-    });
+            //====================================================
+            // CHECK IF PLAYER 2 HAS BLACKJACK FIRST
+            //====================================================
+            var player2HasBlackJack = checkForBlackJack(player2Card);
 
-    //========================================================================================================================
-    // player stands, time for banker to draw
-    //========================================================================================================================
-    var bankerPoints = bankerMove(bankerCard, newDeck);
-    // console.log("banker = " + bankerPoints);
+            if (player2HasBlackJack) {
+                //====================================================
+                // PLAYER 2 HAS BLACKJACK
+                //====================================================
+                console.log('Player 2 blackjack');
+                player2Card = "BJ";
+                bankerDrawCards(bankerCard, newDeck);
 
-    //========================================================================================================================
-    // evaluate player win or banker win
-    //========================================================================================================================
-    if (bankerPoints[1]) {
-        console.log("Banker blackjack");
-    } else if (bankerPoints[0] === playerPoints[0]) {
-        console.log("Draw");
-    } else if (playerPoints[0] > bankerPoints[0] || bankerPoints > 21) {
-        console.log("Player wins");
+            } else {
+
+                //====================================================
+                // SET PLAYER TO PLAYER 2 AND UPDATE PLAYER INDICATOR
+                //====================================================
+                whichPlayersTurn = 2;
+                $('#player-turn-indicator').fadeOut(500, function() {
+                  $('#player-turn-indicator').text("Player " + whichPlayersTurn + "'s turn").fadeIn(500);
+                })
+
+                //====================================================
+                // HIDE THE STAND BUTTON IF NOT ENOUGH POINTS
+                //====================================================
+                var player2Points = calculatePoints(player2Card)
+                if (player2Points[0] < 12) {
+                  $('#stand').fadeOut(1000);
+                };
+
+            };
+
+        } else {
+            //====================================================
+            // PLAYER 2 IS DONE, CAN RUN BANKER DRAW
+            //====================================================
+            bankerDrawCards(bankerCard, newDeck);
+        }
+    //====================================================
+    // NO SPLIT SCENARIO
+    //====================================================
     } else {
-        console.log("Banker wins");
+        bankerDrawCards(bankerCard, newDeck);
+    };
+  });
+
+  $('#split').click(function() {
+    //====================================================
+    // UPDATE DOM
+    //====================================================
+    appendPlayer2Block();
+    updatePlayerBlocks(player1Card);
+    drawCardForSplitCase();
+
+    //====================================================
+    // CHECK IF PLAYER 1 BLACKJACK
+    //====================================================
+    var player1BlackJack = checkForBlackJack(player1Card);
+
+    //====================================================
+    // IF PLAYER 1 BLACKJACK
+    //====================================================
+    if (player1BlackJack) {
+        console.log("Player 1 blackjack");
+        player1Card = "BJ";
+
+        //====================================================
+        // CHECK IF PLAYER 2 BLACKJACK
+        //====================================================
+        var player2BlackJack = checkForBlackJack(player2Card);
+
+        if (player2BlackJack) {
+            console.log("Player 2 blackjack");
+            resetButtons();
+        } else {
+
+            whichPlayersTurn = 2;
+
+            //====================================================
+            // UPDATE BUTTONS AND PLAYER INDICATOR
+            //====================================================
+            $('#split').fadeOut(1000);
+            $('#player-turn-indicator').fadeOut(500, function() {
+              $('#player-turn-indicator').text("Player " + whichPlayersTurn + "'s turn").fadeIn(500);
+            })
+
+            //====================================================
+            // HIDE STAND IF INSUFFICIENT POINTS
+            //====================================================
+            var player2Points = calculatePoints(player2Card)
+            if (player2Points[0] < 12) {
+              $('#stand').fadeOut(1000);
+            };
+        };
+
+    //====================================================
+    // PLAYER 1 NO BLACKJACK
+    //====================================================
+    } else {
+        whichPlayersTurn = 1;
+
+        //====================================================
+        // UPDATE BUTTONS AND PLAYER INDICATOR
+        //====================================================
+        $('#split').fadeOut(1000);
+        $('#player-turn-indicator').fadeOut(500, function() {
+          $('#player-turn-indicator').text("Player " + whichPlayersTurn + "'s turn").fadeIn(500);
+        })
+
+        //====================================================
+        // HIDE STAND IF INSUFFICIENT POINTS
+        //====================================================
+        var player1Points = calculatePoints(player1Card)
+        if (player1Points[0] < 12) {
+          $('#stand').fadeOut(1000);
+        };
     };
   });
 

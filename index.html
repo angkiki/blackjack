@@ -12,26 +12,52 @@
     <link rel="stylesheet" type="text/css" href="style.css">
   </head>
   <body>
-    <div align="center" id="bankers-cards">
-      <p class="title">
-        Banker: <span id="banker-points"></span>
-      </p>
-    </div></br>
+    <div class="row">
+      <!-- <div class="col-3">
+        <div id="header">
+          <img src="images/las-vegas.png" id="header-image" />
+          <p align="center" id="gamename">
+            Casino </br> BlackJack
+          </p>
+        </div>
+      </div> -->
 
-    <div align="center" id="players-cards">
-      <p class="title">
-        Player: <span id="player-points"></span>
-      </p>
-    </div></br>
+      <div class="col">
 
-    <div align="center">
-      <button type="button" class="btn btn-lg btn-primary" id="deal">Deal</button>
-    </div></br>
+        <div class="row">
+          <div class="col">
+            <div align="center" id="bankers-cards">
+              <p class="title">
+                Banker: <span id="banker-points"></span>
+              </p>
+            </div>
+          </div>
+        </div></br>
 
-    <div align="center" id="betting-actions" style="display: none;">
-      <button style="display:none;" type="button" class="betting-action-buttons btn btn-lg btn-success" id="hit">Hit</button>
-      <button style="display:none;" type="button" class="betting-action-buttons btn btn-lg btn-danger" id="stand">Stand</button>
-      <button style="display:none;" type="button" class="betting-action-buttons btn btn-lg btn-warning" id="split">Split</button>
+        <div class="row" id="player-cards-holder">
+          <div class="col" id="player1">
+            <div align="center" id="players-cards">
+              <p class="title">
+                Player: <span id="player-points"></span>
+              </p>
+            </div>
+          </div>
+        </div></br>
+
+        <div class="row">
+          <div class="col">
+            <div align="center" id="betting-actions">
+              <button type="button" class="btn btn-lg btn-primary" id="deal">Deal</button>
+              <button style="display:none;" type="button" class="betting-action-buttons btn btn-lg btn-success" id="hit">Hit</button>
+              <button style="display:none;" type="button" class="betting-action-buttons btn btn-lg btn-danger" id="stand">Stand</button>
+              <button style="display:none;" type="button" class="betting-action-buttons btn btn-lg btn-warning" id="split">Split</button>
+            </div>
+            <p align="center" id="player-turn-indicator"></p>
+          </div>
+        </div>
+
+      </div>
     </div>
+
   </body>
 </html>

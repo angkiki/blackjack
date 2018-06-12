@@ -14,7 +14,8 @@ const deckOfCards = [
   "13s", "13h", "13c", "13d"
 ];
 
-var playerCard = null;
-var playerPoints = 0;
+var player1Card = null;
+var player2Card = null;
 var bankerCard = null;
 var newDeck = null;
+var whichPlayersTurn = false

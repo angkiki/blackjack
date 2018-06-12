@@ -1,7 +1,18 @@
-//========================================================================================================================
-// general functions
-//========================================================================================================================
+//====================================================
+// RESETING OF BUTTONS
+//====================================================
+function resetButtons() {
+  $('#split').fadeOut(1000);
+  $('#stand').fadeOut(1000);
+  $('#hit').fadeOut(1000, function() {
+    $('#deal').fadeIn(1000);
+  });
+};
 
+
+//====================================================
+// CREATING A RANDOM DECK WITH 4 DECKS OF CARDS
+//====================================================
 function createDeck() {
   // creates a deck with 6 decks of cards randomly shuffled in
   var shuffledDeck = [];
@@ -21,6 +32,9 @@ function createDeck() {
 };
 
 
+//====================================================
+// RANDOMLY ASSIGN THE PLAYER 2 CARDS AND BANKER 1 CARD
+//====================================================
 function dealCards(deck) {
   // deals 2 cards to player and 1 card to banker
   var player = [];
@@ -41,6 +55,10 @@ function dealCards(deck) {
   return [player, banker];
 };
 
+
+//====================================================
+// DRAW A RANDOM CARD
+//====================================================
 function drawACard(deck) {
   // draws a random card from the remaining deck
   var randomNumber = Math.floor(Math.random() * deck.length);
@@ -50,16 +68,29 @@ function drawACard(deck) {
   return randomCard;
 };
 
-function appendPlayerCards(card) {
+
+//====================================================
+// ANIMATE PLAYERS CARDS
+//====================================================
+function appendPlayerCards(card, whichPlayer) {
   var folder = "images/";
   var extension = ".png";
   var cardImage = folder + card + extension;
 
-  $('#players-cards').append("<img style='display:none;' src='" + cardImage + "' class='card-images'/>");
+  if (whichPlayer === 2) {
+      $('#players-cards2').append("<img style='display:none;' src='" + cardImage + "' class='card-images'/>");
 
-  $('.card-images').fadeIn(700);
+      $('#players-cards2 img').fadeIn(700);
+  } else {
+      $('#players-cards').append("<img style='display:none;' src='" + cardImage + "' class='card-images'/>");
+
+      $('#players-cards img').fadeIn(700);
+  };
 };
 
+//====================================================
+// ANIMATE BANKERS CARDS
+//====================================================
 function appendBankerCards(card) {
   var folder = "images/";
   var extension = ".png";
@@ -70,227 +101,284 @@ function appendBankerCards(card) {
   $('.card-images').fadeIn(700);
 };
 
-function displayPlayerPoints(playerPointArray) {
-  if (playerPointArray[1]) {
-      if (playerPointArray[0] === playerPointArray[1]) {
-          $('#player-points').text(playerPointArray[0]);
-      } else {
-          $('#player-points').text(playerPointArray[0] + " or " + playerPointArray[1]);
-      };
-
-  } else {
-      $('#player-points').text(playerPointArray[0])
-  };
-};
-
-function displayBankerPoints(bankerPoints) {
-  $('#banker-points').text(bankerPoints);
-}
-
-function updateBankerPoints(bankerPointsArray) {
-  if (bankerPointsArray[1]) {
-      if (bankerPointsArray[0] === bankerPointsArray[1]) {
-          $('#banker-points').text(bankerPointsArray[0]);
-      } else {
-          $('#banker-points').text(bankerPointsArray[0] + " or " + bankerPointsArray[1]);
-      };
-
-  } else {
-      $('#banker-points').text(bankerPointsArray[0])
-  };
-};
-
-//========================================================================================================================
-// player functions
-//========================================================================================================================
-
-function calculatePlayersPointsWith2Cards(player) {
-  // calculates the inital score of the player with 2 cards and returns if player can split/has blackjack
+//====================================================
+// CHECK FOR BLACKJACK
+//====================================================
+function checkForBlackJack(arrayOfCards) {
+  // this will be ran only when we have 2 cards
+  var hasBlackJack = false;
   var points = 0;
-  var otherPoints = 0;
-  var split = false;
-  var blackJack = false;
 
-  for (var i=0; i<player.length; i++) {
-    var card = parseInt( player[i].slice(0,-1) );
+  for (var i = 0; i < arrayOfCards.length; i++) {
+    var number = parseInt( arrayOfCards[i].slice(0, -1) );
 
-    switch(card) {
+    switch (number) {
       case 1:
         points += 11;
-        otherPoints += 1;
         break;
       case 11:
       case 12:
       case 13:
         points += 10;
-        otherPoints += 10;
         break;
-
       default:
-        points += card;
-        otherPoints += card;
+        points += number;
+        break;
     };
   };
 
-  if (parseInt( player[0].slice(0,-1) ) === parseInt( player[1].slice(0,-1) )) {
-      split = true;
+  if (points === 21) {
+    hasBlackJack = true;
   };
 
-  if (points === 21 && otherPoints === 11) {
-    blackJack = true;
-  };
-
-  if (points === otherPoints) {
-    otherPoints = false;
-  };
-
-  return [points, otherPoints, split, blackJack];
+  return hasBlackJack;
 };
 
+//====================================================
+// MANIPULATE DOM TO INLCUDE SPACE FOR PLAYER 2 WHEN SPLIT
+//====================================================
+function appendPlayer2Block() {
+  $('#player1').attr('class', 'col-6');
+  $('#player1').clone().attr('id', 'player2').appendTo('#player-cards-holder');
+  $('#player2 div').attr('id', 'players-cards2');
+  $('#players-cards2 p').html("<p class='title'>Player 2: <span id='player-points-2'></span></p>");
 
-function calculatePlayersPointsWithMultipleCards(player) {
-  // calculates the score of the players cards from 3 cards and above
-  var points = 0;
-  var otherPoints = 0;
-  var hasAce = false;
-
-  for (var i=0; i<player.length; i++) {
-    var card = parseInt( player[i].slice(0,-1) );
-
-    switch(card) {
-      case 1:
-        if (hasAce === false) {
-            points += 11;
-            hasAce = true;
-        } else {
-            points += 1;
-        }
-        otherPoints += 1;
-        break;
-      case 11:
-      case 12:
-      case 13:
-        points += 10;
-        otherPoints += 10;
-        break;
-
-      default:
-        points += card;
-        otherPoints += card;
-    };
-  };
-
-  if (points === otherPoints) {
-    otherPoints = false;
-  };
-
-  if (points > 21 && hasAce === true) {
-    points = otherPoints;
-  };
-
-  return [points, otherPoints];
-};
-
-function checkIfPlayerBurst(points) {
-  if (points > 21) {
-    return true;
-  };
-
-  return false;
+  $('#players-cards2 p span').attr('id', 'player-points2');
 }
 
-//========================================================================================================================
-// banker functions
-//========================================================================================================================
+//====================================================
+// UPDATE DOM TO UPDATE CARDS AND IMAGES WHEN SPLIT
+//====================================================
+function updatePlayerBlocks(arrayOfCards) {
+  var holderArray = arrayOfCards.slice(0);
 
-function evaluateBankersHand(bankersCards) {
-  var holderValue = 0;
-  var otherHolderValue = 0;
+  player1Card = [ holderArray[0] ];
+  player2Card = [ holderArray[1] ];
+
+  $('#players-cards img').remove();
+  $('#players-cards2 img').remove();
+
+  appendPlayerCards(player1Card[0], 1);
+  appendPlayerCards(player2Card[0], 2);
+};
+
+function drawCardForSplitCase() {
+  var randomCard1 = drawACard(newDeck);
+  var randomCard2 = drawACard(newDeck);
+
+  player1Card.push(randomCard1);
+  appendPlayerCards(randomCard1, 1);
+  displayPlayerPoints(player1Card, 1);
+
+  player2Card.push(randomCard2);
+  appendPlayerCards(randomCard2, 2);
+  displayPlayerPoints(player2Card, 2);
+}
+
+//====================================================
+// REMOVE DOM ELEMENT FOR PLAYER 2 WHEN SPLIT ROUND ENDS
+//====================================================
+function removePlayer2Block() {
+  $('#player2').remove();
+  $('#player1').attr('class', 'col');
+  player2Card = null;
+  whichPlayersTurn = false;
+  $('#player-turn-indicator').text("");
+};
+
+//===========================================================================
+// game functions
+//===========================================================================
+
+
+//====================================================
+// CHECK IF PLAYER CAN SPLIT HIS CARDS
+//====================================================
+function playerCanSplit(arrayOfCards) {
+  var canSplit = false;
+
+  var cardOne = parseInt( arrayOfCards[0].slice(0, -1) )
+  var cardTwo = parseInt( arrayOfCards[1].slice(0, -1) )
+
+  if (cardOne === cardTwo) {
+    canSplit = true;
+  };
+
+  return canSplit;
+};
+
+
+//====================================================
+// CALCULATE POINTS
+//====================================================
+function calculatePoints(arrayOfCards) {
+  var softAcePoints = 0;
+  var hardAcePoints = 0;
   var hasAce = false;
-  var isSoft = false;
-  var blackJack = false;
 
-  for (var i=0; i<bankersCards.length; i++) {
-    var cardValue = parseInt( bankersCards[i].slice(0,-1) );
+  for (var i = 0; i < arrayOfCards.length; i++) {
+    var number = parseInt( arrayOfCards[i].slice(0, -1) );
 
-    switch(cardValue) {
+    switch (number) {
       case 11:
       case 12:
       case 13:
-        holderValue += 10;
-        otherHolderValue += 10;
+        softAcePoints += 10;
+        hardAcePoints += 10;
         break;
 
       case 1:
+        // calculate hand value with ace
+        // basically if user will never have 2 aces that are valued at 11. so after the first one, the subsequent ones will always count for 1 point
         if (hasAce === false) {
-            holderValue += 11;
+            softAcePoints += 11;
             hasAce = true;
-            isSoft = true;
         } else {
-            holderValue += 1;
-        }
-        otherHolderValue += 1;
+            softAcePoints += 1;
+        };
+        hardAcePoints += 1;
         break;
 
       default:
-        holderValue += cardValue;
-        otherHolderValue += cardValue;
-        break;
+        softAcePoints += number;
+        hardAcePoints += number;
     };
   };
 
-  if (bankersCards.length === 2) {
-      if (holderValue === 21) {
-          return [holderValue, otherHolderValue, isSoft, blackJack];
-      };
+  if (hasAce) {
+    // if the user has an ace
+    if (softAcePoints > 21) {
+      // and if we take ace at 11 the user burst
+      // means we can only take ace as 1, which will be
+      // hard ace value
+      softAcePoints = hardAcePoints;
+    };
   };
 
-  if (holderValue > otherHolderValue) {
-    holderValue = otherHolderValue;
-    isSoft = false;
-  };
-
-  if (holderValue === otherHolderValue) {
-    otherHolderValue = false;
-  };
-
-  return [holderValue, otherHolderValue, isSoft, blackJack];
+  return [softAcePoints, hardAcePoints, hasAce];
 };
 
-function bankerMove(bankersCards, deck) {
 
-  var bankerPoints = 0;
-  var blackjack = false;
-  var noHard17 = true;
-  var noSoft16 = true;
 
-  while (noHard17 && noSoft16) {
-    //========================================================================================================================
-    // draw a card
-    //========================================================================================================================
+//====================================================
+// UPDATE DOM TO DISPLAY POINTS
+//====================================================
+function displayPlayerPoints(arrayOfPlayerCards, whichPlayer) {
+  var points = calculatePoints(arrayOfPlayerCards);
+
+  if (points[2]) {
+      // means the player has an Ace
+      if (points[0] > points[1]) {
+        var text = points[0] + " or " + points[1]
+
+        if (whichPlayer === 2) {
+            $('#player-points2').text(text);
+        } else {
+            $('#player-points').text(text);
+        };
+      } else {
+          if (whichPlayer === 2) {
+              $('#player-points2').text(points[0]);
+          } else {
+              $('#player-points').text(points[0]);
+          };
+      };
+  } else {
+      if (whichPlayer === 2) {
+          $('#player-points2').text(points[0]);
+      } else {
+          $('#player-points').text(points[0]);
+      };
+  };
+};
+
+
+//====================================================
+// UPDATE DOM TO DISPLAY POINTS
+//====================================================
+function displayBankerPoints(arrayOfBankerCards) {
+  var points = calculatePoints(arrayOfBankerCards);
+
+  if (points[2]) {
+      // means the banker has an Ace
+      if (points[0] > points[1]) {
+        var text = points[0] + " or " + points[1]
+        $('#banker-points').text(text);
+      } else {
+        $('#banker-points').text(points[0]);
+      };
+  } else {
+      $('#banker-points').text(points[0]);
+  };
+};
+
+
+//====================================================
+// CHECK IF PLAYER BURSTS
+//====================================================
+function checkIfBurst(arrayOfCards) {
+  var burst = false;
+  var points = calculatePoints(arrayOfCards);
+
+  if (points[0] > 21) {
+    burst = true;
+  };
+
+  return burst;
+};
+
+
+//====================================================
+// BANKER DRAWING CARDS TILL SUFFICIENT
+//====================================================
+function animateDrawingOfCards(arrayOfCards, deck) {
+  while (true) {
     var randomCard = drawACard(deck);
-    bankersCards.push(randomCard);
+    arrayOfCards.push(randomCard);
+
     appendBankerCards(randomCard);
+    displayBankerPoints(arrayOfCards);
+    var points = calculatePoints(arrayOfCards);
 
-    //========================================================================================================================
-    // evaluate score
-    //========================================================================================================================
-    var hasSufficientPoints = evaluateBankersHand(bankersCards);
-    updateBankerPoints(hasSufficientPoints);
+    if (points[2]) {
+        // check for blackjack first
+        if (arrayOfCards.length === 2) {
+            var bankerHasBlackJack = checkForBlackJack(arrayOfCards);
 
-    if (hasSufficientPoints[3]) {
-      bankerPoints = hasSufficientPoints[0];
-      blackjack = true;
-      return [bankerPoints, blackjack];
-    };
+            if (bankerHasBlackJack) {
+                return true;
+            };
 
-    if (hasSufficientPoints[2] && hasSufficientPoints[0] >= 16) {
-      noSoft16 = false;
-      bankerPoints = hasSufficientPoints[0];
-    } else if (hasSufficientPoints[2] === false && hasSufficientPoints[0] >= 17) {
-      noHard17 = false;
-      bankerPoints = hasSufficientPoints[0];
+        };
+
+        if (points[0] >= 16) {
+            // and if softace is 16
+            // dont need to do anything
+            return points;
+        }
+
+    } else {
+        // if banker has no ace
+        if (points[0] >= 17) {
+            // can stand on hard 17
+            // dont need do anything
+            return points;
+        };
     };
   };
-  return [bankerPoints];
+};
+
+
+//====================================================
+// BANKERS WHOLE TURN SEQUENCE
+//====================================================
+function bankerDrawCards(banker, deck) {
+  var bankerPoints = animateDrawingOfCards(banker, deck);
+  var player1Points = calculatePoints(player1Card);
+
+  if (player2Card) {
+    var player2Points = calculatePoints(player2Card);
+  };
+
+  console.log("Evaluate win or lose");
 };
