@@ -1,3 +1,71 @@
+#broke {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 7;
+  display: none;
+  text-align: center;
+  font-size: 100px;
+  color: white;
+  padding-top: 40px;
+}
+
+#overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 2;
+  display: none;
+}
+
+#overlay-holder {
+  background-color: white;
+  border: 2px solid black;
+  border-radius: 25px;
+  height: 200px;
+  width: 500px;
+  margin: 140px auto 0;
+}
+
+#game-result {
+  color: black;
+  font-weight: bold;
+  font-size: 24px;
+  margin-top: 76px;
+}
+
+#rules-block {
+  /*display: none;*/
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+}
+
+#rules-holder {
+  background-color: white;
+  border: 4px solid black;
+  height: 500px;
+  width: 700px;
+  margin: 110px auto;
+  padding: 40px;
+}
+
+#rules-holder ul {
+  list-style-type: disc;
+  font-size: 22px;
+  margin: 20px 50px;
+}
+
 #header {
   height: 100px;
   width: auto;
@@ -10,17 +78,17 @@
   display: inline-block;
 }
 
-#bankroll {
+#card-counter-holder {
   display: inline-block;
   font-weight: bold;
   color: white;
 }
 
-#bet-amount {
+.header-text {
   display: inline-block;
-  font-weight: bold;
   color: white;
-  margin-left: 40px;
+  font-weight: bold;
+  margin-left: 20px;
 }
 
 #poker-chips-holder {
@@ -29,6 +97,8 @@
   height: 100px;
   padding-top: 12.5px;
   padding-right: 20px;
+  position: relative;
+  z-index: 3;
 }
 
 #clear-bet {
@@ -42,14 +112,10 @@
   text-align: center;
   background: white;
   font-weight: bold;
+  /*position: relative;
+  z-index: 3;*/
 }
 
-#game-result {
-  color: white;
-  font-weight: bold;
-  display: inline-block;
-  margin-left: 20px;
-}
 
 .poker-chip {
   height: 75px;
@@ -58,8 +124,9 @@
   border-radius: 50%;
   cursor: pointer;
   display: inline-block;
-  /*margin: 2px auto;*/
   color: white;
+  /*position: relative;
+  z-index: 3;*/
 }
 
 .chip-value {
@@ -83,6 +150,16 @@
   background-color: orange;
 }
 
+#rules {
+  color: white;
+  background-color: red;
+  border: 2px solid white;
+  padding: 10px;
+  display: inline-block;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
 /* --------------- END OF HEADER ---------------------*/
 
 .card-images {
@@ -103,4 +180,9 @@
 
 .title {
   font-size: 24px;
+}
+
+#deal {
+  z-index: 3;
+  position: relative;
 }

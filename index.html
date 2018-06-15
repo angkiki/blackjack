@@ -5,25 +5,71 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
     <script src="global_variables.js" charset="utf-8"></script>
     <script src="functions.js" charset="utf-8"></script>
-    <script src="gameplay.js" charset="utf-8"></script>
     <script src="betting.js" charset="utf-8"></script>
+    <script src="card_counter.js" charset="utf-8"></script>
+    <script src="gameplay.js" charset="utf-8"></script>
     <title></title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="style.css">
   </head>
   <body>
+    <div id="broke">
+      YOU ARE BROKE!</br>
+      PLEASE REFRESH THE PAGE TO START AGAIN
+    </div>
+
+    <div id="overlay">
+      <div id="overlay-holder">
+        <p align="center" id="game-result"></p>
+      </div>
+    </div>
+
+    <div id="rules-block">
+      <div id="rules-holder">
+        <h3 align="center">Game Rules</h3>
+        <ul>
+          <li>8 decks of cards used</li>
+          <li>Reshuffle when less than 52 cards</li>
+          <li>Dealer stands on Soft 16 or Hard 17</li>
+          <li>Player can only split once</li>
+          <li>Card count: A/K/J/10 (-1)</li>
+          <li>Card count: 2/3/4/5/6 (+1)</li>
+          <li>Card count: 7/8/9 (0)</li>
+          <li>True Count: Count &#247; Number of Decks Left</li>
+          <li>Bet amount remains the same after every round</li>
+        </ul>
+
+        <div align="center">
+          <div class="btn btn-lg btn-danger" id="close-rules-block">
+            Close
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="header">
       <img src="images/las-vegas.png" />
-      <p id="bankroll">
+
+      <p id="card-counter-holder">
+        Card Count: <span id="card-count">0</span>
+      </p>
+
+      <p class="header-text" id="true-count-holder">
+        True Count: <span id="true-count">0</span>
+      </p>
+
+      <p class="header-text" id="deck-holder">
+        Remaining Cards: <span id="deck"></span>
+      </p>
+
+      <p class="header-text" id="bankroll">
         Bankroll: $<span id="player-bankroll-amount">1,000,000</span>
       </p>
 
-      <p id="bet-amount">
+      <p class="header-text" id="bet-amount">
         Bet: $<span id="player-bet-amount"></span>
       </p>
-
-      <p align="center" id="game-result"></p>
 
       <div id="poker-chips-holder">
         <div id="clear-bet">
@@ -44,6 +90,10 @@
 
         <div class="poker-chip" id="chip-5000">
           <p class="chip-value" id="c5000">$5000</p>
+        </div>
+
+        <div id="rules">
+          Rules
         </div>
       </div>
     </div>

@@ -21,3 +21,4 @@ var newDeck = null;
 var whichPlayersTurn = false
 var bankroll = 1000000;
 var betAmount = 0;
+var cardCount = 0;

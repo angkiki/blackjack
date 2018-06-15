@@ -17,6 +17,7 @@ function displayAsDollars(amount) {
 
 function deductBankroll() {
   bankroll -= betAmount;
+  playerBroke();
   $('#player-bankroll-amount').text( displayAsDollars(bankroll) );
 };
 
@@ -39,4 +40,10 @@ function playerDraw() {
 function playerSplit() {
   bankroll -= betAmount;
   $('#player-bankroll-amount').text( displayAsDollars(bankroll) );
+};
+
+function playerBroke() {
+  if (bankroll < 0) {
+      $('#broke').show();
+  };
 };

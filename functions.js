@@ -51,11 +51,17 @@ function dealCards(deck) {
     var randomNumber = Math.floor(Math.random() * deck.length);
 
     if (i%2 === 1) {
+        cardCounter(deck[randomNumber]);
         player.push(deck[randomNumber]);
         deck.splice(randomNumber, 1);
+        displayTrueCount(cardCount, deck);
+        displayNumberOfCardsInDeck(deck);
     } else {
+        cardCounter(deck[randomNumber]);
         banker.push(deck[randomNumber]);
         deck.splice(randomNumber, 1);
+        displayTrueCount(cardCount, deck);
+        displayNumberOfCardsInDeck(deck);
     };
   };
 
@@ -176,6 +182,16 @@ function drawCardForSplitCase() {
   var randomCard1 = drawACard(newDeck);
   var randomCard2 = drawACard(newDeck);
 
+  // update card counter for player 1
+  cardCounter(randomCard1);
+
+  // update card counter for player 2
+  cardCounter(randomCard2);
+
+  // update true count and deck size
+  displayTrueCount(cardCount, newDeck);
+  displayNumberOfCardsInDeck(newDeck);
+
   player1Card.push(randomCard1);
   appendPlayerCards(randomCard1, 1);
   displayPlayerPoints(player1Card, 1);
@@ -262,6 +278,7 @@ function calculatePoints(arrayOfCards) {
       // means we can only take ace as 1, which will be
       // hard ace value
       softAcePoints = hardAcePoints;
+      hasAce = false;
     };
   };
 
@@ -370,8 +387,11 @@ function checkBankerWinOrLose() {
 
   if (whichPlayersTurn !== false) {
       if (bankerHasBlackJack) {
-          $('#game-result').hide().text('Banker Has Blackjack').fadeIn(500);
-          resetButtons();
+          $('#game-result').text("Banker Blackjack");
+          setTimeout(function() {
+            $('#overlay').fadeIn(500);
+            resetButtons();
+          }, 1000);
       } else {
           //====================================================
           // GRAB THE POINTS OF PLAYERS 1 AND 2
@@ -380,31 +400,48 @@ function checkBankerWinOrLose() {
               var player1Points = calculatePoints(player1Card);
               var result1 = comparePoints(player1Points[0], bankerPoints[0]);
           } else {
-              var result1 = "Banker Wins";
+              if (player1Card === "Player 1 Blackjack") {
+                  var result1 = player1Card;
+              } else {
+                  var result1 = "Banker Wins";
+              };
           };
 
           if (typeof player2Card !== 'string') {
               var player2Points = calculatePoints(player2Card);
               var result2 = comparePoints(player2Points[0], bankerPoints[0]);
           } else {
-              var result2 = "Banker Wins";
+              if (player2Card === "Player 2 Blackjack") {
+                  var result2 = player2Card;
+              } else {
+                  var result2 = "Banker Wins";
+              };
           };
 
-          $('#game-result').hide().text(result1 + " " + result2).fadeIn(500);
-          resetButtons();
+          $('#game-result').text(result1 + " | " + result2);
+          setTimeout(function() {
+            $('#overlay').fadeIn(500);
+            resetButtons();
+          }, 1000);
       };
   } else {
       //====================================================
       // ONLY ONE PLAYER
       //====================================================
       if (bankerHasBlackJack) {
-          $('#game-result').hide().text('Banker Has Blackjack').fadeIn(500);
-          resetButtons();
+          $('#game-result').text("Banker Has Blackjack");
+          setTimeout(function() {
+            $('#overlay').fadeIn(500);
+            resetButtons();
+          }, 1000);
       } else {
           var playerPoints = calculatePoints(player1Card);
           var result = comparePoints(playerPoints[0], bankerPoints[0]);
-          $('#game-result').hide().text(result).fadeIn(500);
-          resetButtons();
+          $('#game-result').text(result);
+          setTimeout(function() {
+            $('#overlay').fadeIn(500);
+            resetButtons();
+          }, 1000);
       };
   };
 };
@@ -414,7 +451,6 @@ function animateDrawingOfCards(arrayOfCards, deck) {
   $('#split').fadeOut(1000);
   $('#stand').fadeOut(1000);
   $('#hit').fadeOut(1000);
-  $('#game-result').hide().text("Banker Playing...").fadeIn(500);
 
   var bankerIsDrawingCards = setInterval(function() {
 
@@ -424,6 +460,10 @@ function animateDrawingOfCards(arrayOfCards, deck) {
       var randomCard = drawACard(deck);
       arrayOfCards.push(randomCard);
 
+      // update card count
+      cardCounter(randomCard);
+      displayTrueCount(cardCount, newDeck);
+      displayNumberOfCardsInDeck(newDeck);
 
       //====================================
       // ANIMATE ACCORDINGLY
@@ -447,6 +487,8 @@ function animateDrawingOfCards(arrayOfCards, deck) {
           };
 
           if (points[0] >= 16) {
+              // this part will never trigger if ace is taken as 1
+              // because we set points[2], which is has ace to false
               // and if softace is 16
               // dont need to do anything
               clearTimeout(bankerIsDrawingCards);
@@ -455,7 +497,7 @@ function animateDrawingOfCards(arrayOfCards, deck) {
           }
 
       } else {
-          // if banker has no ace
+          // if banker has no ace or if ace is taken as 1 
           if (points[0] >= 17) {
               // can stand on hard 17
               // dont need do anything

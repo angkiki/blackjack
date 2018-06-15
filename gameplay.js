@@ -6,6 +6,15 @@ $(document).ready(function() {
   // shuffle a new deck of 4 cards
   //========================================================================================================================
   newDeck = createDeck();
+  $('#deck').text(newDeck.length);
+
+  $('#rules').click(function() {
+    $('#rules-block').fadeIn(750);
+  });
+
+  $('#close-rules-block').click(function() {
+    $('#rules-block').fadeOut(750);
+  })
 
   $('#clear-bet').click(function() {
     betAmount = 0;
@@ -31,8 +40,8 @@ $(document).ready(function() {
     $('.card-images').remove();
     $('#banker-points').text('');
     $('#player-points').text('');
-    $('#game-result').hide()
     $('#poker-chips-holder').fadeOut(500);
+    $('#overlay').fadeOut(500);
     deductBankroll();
 
     //========================================================================================================================
@@ -79,7 +88,8 @@ $(document).ready(function() {
       //=====================================================================
       if (playerHasBlackJack) {
           playerBlackJackWinnings();
-          $('#game-result').hide().text("Player Blackjack").fadeIn(500);
+          $('#game-result').text("Player Blackjack");
+          $('#overlay').fadeIn(500);
           $('#deal').fadeIn(1000);
       } else {
           if (canSplit) {
@@ -113,6 +123,9 @@ $(document).ready(function() {
         // DRAW A CARD
         //====================================================
         var newCard = drawACard(newDeck);
+        cardCounter(newCard);
+        displayTrueCount(cardCount, newDeck);
+        displayNumberOfCardsInDeck(newDeck);
         eval("player" + whichPlayersTurn + "Card").push(newCard);
         appendPlayerCards(newCard, whichPlayersTurn);
 
@@ -128,19 +141,19 @@ $(document).ready(function() {
         //====================================================
         if (burst) {
             if (whichPlayersTurn === 1) {
-                player1Card = "Burst";
+                player1Card = "Player 1 Burst";
                 whichPlayersTurn = 2;
                 $('#player-turn-indicator').fadeOut(500, function() {
                   $('#player-turn-indicator').text("Player " + whichPlayersTurn + "'s turn").fadeIn(500);
                 })
             } else {
-                if (player1Card === "Burst") {
-                    $('#game-result').hide().text('Player 1 & 2 Lose').fadeIn(500);
+                if (player1Card === "Player 1 Burst") {
+                    // $('#game-result').hide().text('Player 1 & 2 Lose').fadeIn(500);
+                    $('#game-result').text("Player 1 & 2 Lose");
+                    $('#overlay').fadeIn(500);
                     resetButtons();
                 } else {
-                    $('#game-result').hide().text('Player 2 Burst').fadeIn(500);
-                    player2Card = "Burst";
-                    // bankerDrawCards(bankerCard, newDeck);
+                    player2Card = "Player 2 Burst";
                     animateDrawingOfCards(bankerCard, newDeck);
                     checkBankerWinOrLose();
                 }
@@ -160,6 +173,9 @@ $(document).ready(function() {
         // DRAW A CARD
         //====================================================
         var newCard = drawACard(newDeck);
+        cardCounter(newCard);
+        displayTrueCount(cardCount, newDeck);
+        displayNumberOfCardsInDeck(newDeck);
         player1Card.push(newCard);
         appendPlayerCards(newCard, 1);
 
@@ -175,7 +191,8 @@ $(document).ready(function() {
         //====================================================
         if (burst) {
             resetButtons();
-            $('#game-result').hide().text('Banker Wins').fadeIn(500);
+            $('#game-result').text("Banker Wins");
+            $('#overlay').fadeIn(500);
         } else {
             if ( $('#stand').is(':visible') === false && playerPoints[0] > 11 ) {
               $('#stand').fadeIn(1000);
@@ -207,12 +224,9 @@ $(document).ready(function() {
                 //====================================================
                 // PLAYER 2 HAS BLACKJACK
                 //====================================================
-                $('#game-result').hide().text('Player 2 Blackjack').fadeIn(500);
-                player2Card = "BJ";
+                player2Card = "Player 2 Blackjack";
                 playerBlackJackWinnings();
-                // bankerDrawCards(bankerCard, newDeck);
                 animateDrawingOfCards(bankerCard, newDeck);
-                // checkBankerWinOrLose();
             } else {
 
                 //====================================================
@@ -237,17 +251,13 @@ $(document).ready(function() {
             //====================================================
             // PLAYER 2 IS DONE, CAN RUN BANKER DRAW
             //====================================================
-            // bankerDrawCards(bankerCard, newDeck);
             animateDrawingOfCards(bankerCard, newDeck);
-            // checkBankerWinOrLose();
         }
     //====================================================
     // NO SPLIT SCENARIO
     //====================================================
     } else {
-        // bankerDrawCards(bankerCard, newDeck);
         animateDrawingOfCards(bankerCard, newDeck);
-        // checkBankerWinOrLose();
     };
   });
 // **********************************END OF STAND EVENT*************************************************************
@@ -277,7 +287,7 @@ $(document).ready(function() {
     if (player1BlackJack) {
         playerBlackJackWinnings();
         $('#game-result').hide().text('Player 1 Blackjack').fadeIn(500);
-        player1Card = "BJ";
+        player1Card = "Player 1 Blackjack";
 
         //====================================================
         // CHECK IF PLAYER 2 BLACKJACK
@@ -286,7 +296,8 @@ $(document).ready(function() {
 
         if (player2BlackJack) {
             playerBlackJackWinnings();
-            $('#game-result').hide().text('Player 1 & 2 Blackjack').fadeIn(500);
+            $('#game-result').text("Player 1 & 2 Blackjack");
+            $('#overlay').fadeIn(500);
             resetButtons();
         } else {
 
