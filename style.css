@@ -1,23 +1,93 @@
 #header {
-  height: 100%;
+  height: 100px;
   width: auto;
   background-color: #7399c6;
 }
 
-#header-image {
-  height: 250px;
-  width: 325px;
-  display: block;
-  margin: 0 auto;
+#header img {
+  height: 100px;
+  width: 150px;
+  display: inline-block;
 }
 
-#gamename {
-  font-size: 35px;
+#bankroll {
+  display: inline-block;
+  font-weight: bold;
+  color: white;
 }
+
+#bet-amount {
+  display: inline-block;
+  font-weight: bold;
+  color: white;
+  margin-left: 40px;
+}
+
+#poker-chips-holder {
+  display: inline-block;
+  float: right;
+  height: 100px;
+  padding-top: 12.5px;
+  padding-right: 20px;
+}
+
+#clear-bet {
+  height: 75px;
+  width: 75px;
+  border: 2px solid black;
+  border-radius: 50%;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 70px;
+  text-align: center;
+  background: white;
+  font-weight: bold;
+}
+
+#game-result {
+  color: white;
+  font-weight: bold;
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.poker-chip {
+  height: 75px;
+  width: 75px;
+  border: 2px solid black;
+  border-radius: 50%;
+  cursor: pointer;
+  display: inline-block;
+  /*margin: 2px auto;*/
+  color: white;
+}
+
+.chip-value {
+  line-height: 70px;
+  text-align: center;
+}
+
+#chip-100 {
+  background-color: black;
+}
+
+#chip-500 {
+  background-color: grey;
+}
+
+#chip-1000 {
+  background-color: purple;
+}
+
+#chip-5000 {
+  background-color: orange;
+}
+
+/* --------------- END OF HEADER ---------------------*/
 
 .card-images {
-  height: 200px;
-  width: 125px;
+  height: 150px;
+  width: 100px;
   border: 3px solid black;
   border-radius: 15px;
   margin: 2px;

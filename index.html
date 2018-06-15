@@ -6,24 +6,51 @@
     <script src="global_variables.js" charset="utf-8"></script>
     <script src="functions.js" charset="utf-8"></script>
     <script src="gameplay.js" charset="utf-8"></script>
+    <script src="betting.js" charset="utf-8"></script>
     <title></title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="style.css">
   </head>
   <body>
-    <div class="row">
-      <!-- <div class="col-3">
-        <div id="header">
-          <img src="images/las-vegas.png" id="header-image" />
-          <p align="center" id="gamename">
-            Casino </br> BlackJack
-          </p>
+    <div id="header">
+      <img src="images/las-vegas.png" />
+      <p id="bankroll">
+        Bankroll: $<span id="player-bankroll-amount">1,000,000</span>
+      </p>
+
+      <p id="bet-amount">
+        Bet: $<span id="player-bet-amount"></span>
+      </p>
+
+      <p align="center" id="game-result"></p>
+
+      <div id="poker-chips-holder">
+        <div id="clear-bet">
+          CLEAR
         </div>
-      </div> -->
+
+        <div class="poker-chip" id="chip-100">
+          <p class="chip-value" id="c100">$100</p>
+        </div>
+
+        <div class="poker-chip" id="chip-500">
+          <p class="chip-value" id="c500">$500</p>
+        </div>
+
+        <div class="poker-chip" id="chip-1000">
+          <p class="chip-value" id="c1000">$1000</p>
+        </div>
+
+        <div class="poker-chip" id="chip-5000">
+          <p class="chip-value" id="c5000">$5000</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
 
       <div class="col">
-
         <div class="row">
           <div class="col">
             <div align="center" id="bankers-cards">
@@ -32,7 +59,7 @@
               </p>
             </div>
           </div>
-        </div></br>
+        </div>
 
         <div class="row" id="player-cards-holder">
           <div class="col" id="player1">
@@ -42,7 +69,7 @@
               </p>
             </div>
           </div>
-        </div></br>
+        </div>
 
         <div class="row">
           <div class="col">
@@ -52,8 +79,8 @@
               <button style="display:none;" type="button" class="betting-action-buttons btn btn-lg btn-danger" id="stand">Stand</button>
               <button style="display:none;" type="button" class="betting-action-buttons btn btn-lg btn-warning" id="split">Split</button>
             </div>
+
             <p align="center" id="player-turn-indicator"></p>
-            <p align="center" id="game-result"></p>
           </div>
         </div>
 
